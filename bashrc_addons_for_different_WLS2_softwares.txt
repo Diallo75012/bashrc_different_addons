@@ -1,0 +1,88 @@
+export WORKON_HOME='/home/tech/.virtualenvs'
+VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME='/home/tech/.virtualenvs'
+VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+
+
+# JINA_CLI_BEGIN
+
+## autocomplete
+_jina() {
+  COMPREPLY=()
+  local word="${COMP_WORDS[COMP_CWORD]}"
+
+  if [ "$COMP_CWORD" -eq 1 ]; then
+    COMPREPLY=( $(compgen -W "$(jina commands)" -- "$word") )
+  else
+    local words=("${COMP_WORDS[@]}")
+    unset words[0]
+    unset words[$COMP_CWORD]
+    local completions=$(jina completions "${words[@]}")
+    COMPREPLY=( $(compgen -W "$completions" -- "$word") )
+  fi
+}
+
+complete -F _jina jina
+
+# session-wise fix
+ulimit -n 4096
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+# default workspace for Executors
+
+# JINA_CLI_END
+
+
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/tmp/_MEIiGZs4y/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/tmp/_MEIiGZs4y/etc/profile.d/conda.sh" ]; then
+        . "/tmp/_MEIiGZs4y/etc/profile.d/conda.sh"
+    else
+        export PATH="/tmp/_MEIiGZs4y/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# added by Anaconda3 5.3.1 installer
+# >>> conda init >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$(CONDA_REPORT_ERRORS=false '/home/tech/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    \eval "$__conda_setup"
+else
+    if [ -f "/home/tech/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/tech/anaconda3/etc/profile.d/conda.sh"
+        CONDA_CHANGEPS1=false conda activate base
+    else
+        \export PATH="/home/tech/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda init <<<
+
+
+# Windows Xserver so that WSL2 app can use windows for webui
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2 ":0.0"}')
+export LIBGL_ALWAYS_INDIRECT=1
+# to make sure that dbus is running as it is needed for Xserver
+sudo service dbus start &>/dev/null
+# to run dbus in the background and linked to the session user
+if [ -z "$(pgrep dbus-daemon)" ]; then
+    dbus-daemon --session --fork
+fi
+
+# this for minio server s3 bucket
+complete -C /usr/bin/mc mc
+
+# this for FreeCAD
+# adfter install of: to get pluggin for webui and grapical elements: export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
+
+export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms
